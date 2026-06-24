@@ -1,0 +1,933 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="BloodShot Services - Discord Server Development, Banners, Video Editing & Web Design.">
+    <meta name="theme-color" content="#9B0000">
+    <title>BloodShot | Futuristic Digital Services</title>
+
+    <style>
+        /* ==========================================================================
+           1. CSS VARIABLES & RESET
+           ========================================================================== */
+        :root {
+            --bg-base: #010000;
+            --main-red: #9B0000;
+            --main-red-glow: rgba(155, 0, 0, 0.7);
+            --text-light: #FFEDF1;
+            --text-dim: #b3a5a8;
+            --glass-bg: rgba(10, 0, 0, 0.65);
+            --glass-border: rgba(155, 0, 0, 0.3);
+            --font-main: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            --transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background-color: var(--bg-base);
+            color: var(--text-light);
+            font-family: var(--font-main);
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--bg-base); }
+        ::-webkit-scrollbar-thumb { background: var(--main-red); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #ff1a1a; }
+
+        /* ==========================================================================
+           2. BACKGROUND EFFECTS (GLITCH & PARTICLES)
+           ========================================================================== */
+        .scanlines {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), 
+                        linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+            background-size: 100% 4px, 3px 100%;
+            z-index: -1; pointer-events: none; opacity: 0.4;
+        }
+
+        .particles-container {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -2; pointer-events: none; overflow: hidden;
+        }
+
+        .particle {
+            position: absolute;
+            background: var(--main-red);
+            border-radius: 50%;
+            box-shadow: 0 0 10px var(--main-red), 0 0 20px var(--main-red);
+            opacity: 0;
+            animation: floatUp linear infinite;
+        }
+
+        @keyframes floatUp {
+            0% { transform: translateY(100vh) scale(0); opacity: 0; }
+            20% { opacity: 0.8; }
+            80% { opacity: 0.8; }
+            100% { transform: translateY(-10vh) scale(1.5); opacity: 0; }
+        }
+
+        /* ==========================================================================
+           3. LOADING SCREEN
+           ========================================================================== */
+        #loader {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--bg-base);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.8s ease-out;
+        }
+
+        .loader-text {
+            font-size: 3rem;
+            font-weight: 900;
+            letter-spacing: 5px;
+            color: var(--text-light);
+            text-transform: uppercase;
+            position: relative;
+            animation: glitch 1.5s infinite;
+        }
+
+        .loader-bar {
+            width: 200px; height: 4px;
+            background: #220000;
+            margin-top: 20px;
+            border-radius: 2px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .loader-fill {
+            height: 100%; background: var(--main-red);
+            box-shadow: 0 0 10px var(--main-red);
+            width: 0%;
+            animation: loadProgress 2s ease-in-out forwards;
+        }
+
+        @keyframes loadProgress {
+            0% { width: 0%; }
+            50% { width: 60%; }
+            100% { width: 100%; }
+        }
+
+        @keyframes glitch {
+            0% { text-shadow: 0.05em 0 0 #ff0000, -0.05em -0.025em 0 #00ff00; }
+            14% { text-shadow: 0.05em 0 0 #ff0000, -0.05em -0.025em 0 #00ff00; }
+            15% { text-shadow: -0.05em -0.025em 0 #ff0000, 0.025em 0.025em 0 #00ff00; }
+            49% { text-shadow: -0.05em -0.025em 0 #ff0000, 0.025em 0.025em 0 #00ff00; }
+            50% { text-shadow: 0.025em 0.05em 0 #ff0000, 0.05em 0 0 #00ff00; }
+            99% { text-shadow: 0.025em 0.05em 0 #ff0000, 0.05em 0 0 #00ff00; }
+            100% { text-shadow: -0.025em 0 0 #ff0000, -0.025em -0.025em 0 #00ff00; }
+        }
+
+        /* ==========================================================================
+           4. NAVIGATION BAR
+           ========================================================================== */
+        nav {
+            position: fixed;
+            top: 0; left: 0; width: 100%;
+            background: rgba(1, 0, 0, 0.85);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--glass-border);
+            z-index: 1000;
+            padding: 15px 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 30px rgba(155, 0, 0, 0.1);
+        }
+
+        .nav-logo {
+            font-size: 1.5rem;
+            font-weight: 900;
+            color: var(--text-light);
+            text-decoration: none;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .nav-logo span { color: var(--main-red); }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+        }
+
+        .nav-links a {
+            color: var(--text-light);
+            text-decoration: none;
+            font-size: 1rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            position: relative;
+            padding-bottom: 5px;
+            transition: var(--transition);
+            cursor: pointer;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            left: 0; bottom: 0; width: 0; height: 2px;
+            background: var(--main-red);
+            box-shadow: 0 0 8px var(--main-red);
+            transition: var(--transition);
+        }
+
+        .nav-links a:hover::after, .nav-links a.active::after {
+            width: 100%;
+        }
+
+        /* ==========================================================================
+           5. LAYOUT & GLASSMORPHISM CONTAINERS
+           ========================================================================== */
+        main {
+            padding: 100px 5% 50px 5%;
+            max-width: 1200px;
+            margin: 0 auto;
+            min-height: 100vh;
+        }
+
+        .page {
+            display: none;
+            animation: fadeInPage 0.6s ease-out forwards;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        @keyframes fadeInPage {
+            0% { opacity: 0; transform: translateY(20px) scale(0.98); }
+            100% { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .glass-panel {
+            background: var(--glass-bg);
+            backdrop-filter: blur(15px);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 40px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5), inset 0 0 20px rgba(155, 0, 0, 0.05);
+            margin-bottom: 40px;
+        }
+
+        /* Typography & Hyperlinks */
+        h1, h2, h3 { color: var(--text-light); margin-bottom: 20px; font-weight: 800; }
+        
+        .neon-heading {
+            text-shadow: 0 0 5px var(--main-red), 0 0 15px var(--main-red);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        a.hyperlink {
+            color: var(--main-red);
+            text-decoration: none;
+            font-weight: bold;
+            position: relative;
+            z-index: 1;
+            padding: 0 4px;
+        }
+
+        a.hyperlink::before {
+            content: '';
+            position: absolute;
+            bottom: 0; left: 0; width: 100%; height: 2px;
+            background: var(--main-red);
+            z-index: -1;
+            transition: var(--transition);
+        }
+
+        a.hyperlink:hover::before { height: 100%; opacity: 0.3; }
+
+        /* Buttons */
+        .btn {
+            display: inline-block;
+            background: transparent;
+            color: var(--text-light);
+            border: 2px solid var(--main-red);
+            padding: 12px 30px;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            transition: var(--transition);
+            text-align: center;
+            text-decoration: none;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%; width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(155, 0, 0, 0.4), transparent);
+            transition: var(--transition);
+        }
+
+        .btn:hover {
+            background: var(--main-red);
+            box-shadow: 0 0 20px var(--main-red-glow);
+        }
+
+        .btn:hover::before { left: 100%; transition: 0.5s; }
+
+        /* ==========================================================================
+           6. HOME PAGE (ABOUT & INTRO)
+           ========================================================================== */
+        .hero-section {
+            text-align: center;
+        }
+
+        .logo-box { margin-bottom: 30px; }
+        .logo-box img {
+            max-width: 200px;
+            border-radius: 12px; /* Non-circular */
+            border: 2px solid var(--main-red);
+            box-shadow: 0 0 25px var(--main-red-glow);
+            transition: var(--transition);
+        }
+        .logo-box img:hover { transform: scale(1.05) rotate(-2deg); }
+
+        .about-text {
+            font-size: 1.1rem;
+            color: var(--text-dim);
+            max-width: 800px;
+            margin: 0 auto 30px auto;
+            text-align: justify;
+            text-align-last: center;
+        }
+
+        .about-text strong { color: var(--text-light); }
+
+        .banner-display { margin: 30px 0; }
+        .banner-display img {
+            width: 100%;
+            max-width: 700px;
+            border-radius: 8px;
+            border: 1px solid var(--main-red);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.5);
+            display: block;
+            margin: 0 auto;
+        }
+
+        /* ==========================================================================
+           7. SERVICES PAGE (CARDS & LAYOUT)
+           ========================================================================== */
+        .notice-box {
+            background: rgba(155, 0, 0, 0.15);
+            border-left: 4px solid var(--main-red);
+            padding: 15px 20px;
+            border-radius: 0 8px 8px 0;
+            margin-bottom: 30px;
+            font-style: italic;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        /* Search Filter */
+        .search-container {
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .search-box {
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid var(--glass-border);
+            color: var(--text-light);
+            padding: 12px 20px;
+            border-radius: 8px;
+            width: 300px;
+            font-family: var(--font-main);
+            outline: none;
+            transition: var(--transition);
+        }
+        .search-box:focus { border-color: var(--main-red); box-shadow: 0 0 10px var(--main-red-glow); }
+
+        /* Grid Layout */
+        .service-category {
+            margin-bottom: 60px;
+        }
+
+        .service-category h3 {
+            border-bottom: 1px solid var(--glass-border);
+            padding-bottom: 10px;
+            margin-bottom: 30px;
+            display: inline-block;
+        }
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* Side-by-side */
+            gap: 30px;
+        }
+
+        /* Discord-Style Futuristic Cards */
+        .service-card {
+            background: rgba(15, 15, 15, 0.8);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 25px;
+            position: relative;
+            cursor: pointer;
+            overflow: hidden;
+            transition: var(--transition);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .service-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 4px; height: 100%;
+            background: var(--main-red);
+            transition: var(--transition);
+        }
+
+        .service-card:hover {
+            transform: translateY(-8px);
+            background: rgba(25, 20, 20, 0.9);
+            box-shadow: 0 10px 30px var(--main-red-glow);
+            border-color: var(--main-red);
+        }
+
+        .service-card:hover::before { width: 100%; opacity: 0.05; }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 15px;
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: var(--text-light);
+            margin: 0;
+            max-width: 70%;
+        }
+
+        .price-badge {
+            background: var(--main-red);
+            color: var(--text-light);
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-weight: 900;
+            font-size: 1.1rem;
+            box-shadow: 0 0 10px var(--main-red-glow);
+        }
+
+        .card-desc {
+            color: var(--text-dim);
+            font-size: 0.95rem;
+            margin-bottom: 20px;
+            flex-grow: 1;
+        }
+
+        .card-action {
+            text-align: right;
+            font-size: 0.85rem;
+            color: var(--main-red);
+            text-transform: uppercase;
+            font-weight: bold;
+            opacity: 0.7;
+            transition: var(--transition);
+        }
+
+        .service-card:hover .card-action { opacity: 1; letter-spacing: 1px; }
+
+        /* ==========================================================================
+           8. PORTFOLIO & SHOWCASE PAGE (TESTIMONIALS/FAQ)
+           ========================================================================== */
+        .showcase-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+        }
+
+        /* Testimonials */
+        .testimonial-box {
+            background: rgba(20, 0, 0, 0.4);
+            border-left: 3px solid var(--main-red);
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 0 8px 8px 0;
+        }
+        .testimonial-text { font-style: italic; color: var(--text-dim); margin-bottom: 10px; }
+        .testimonial-author { font-weight: bold; color: var(--main-red); text-transform: uppercase; font-size: 0.85rem;}
+
+        /* FAQ */
+        .faq-item {
+            margin-bottom: 15px;
+            border-bottom: 1px solid var(--glass-border);
+            padding-bottom: 15px;
+        }
+        .faq-q { font-weight: bold; color: var(--text-light); margin-bottom: 5px; cursor: pointer; }
+        .faq-q::before { content: '►'; color: var(--main-red); margin-right: 8px; font-size: 0.8rem; display: inline-block; transition: transform 0.3s;}
+        .faq-item.active .faq-q::before { transform: rotate(90deg); }
+        .faq-a { color: var(--text-dim); font-size: 0.95rem; display: none; padding-left: 20px; margin-top: 10px;}
+        .faq-item.active .faq-a { display: block; animation: fadeInPage 0.4s ease-out; }
+
+        /* ==========================================================================
+           9. CONTACT / ORDER PAGE
+           ========================================================================== */
+        .contact-wrapper {
+            text-align: center;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .order-receipt {
+            background: rgba(0, 0, 0, 0.8);
+            border: 1px dashed var(--main-red);
+            padding: 30px;
+            border-radius: 8px;
+            margin: 30px 0;
+            text-align: left;
+            position: relative;
+        }
+        
+        .order-receipt::after {
+            content: 'SECURE CHECKOUT INITIATION';
+            position: absolute; bottom: -10px; right: 20px;
+            background: var(--bg-base); padding: 0 10px; font-size: 0.7rem; color: var(--main-red);
+        }
+
+        .receipt-row { display: flex; justify-content: space-between; border-bottom: 1px solid #333; padding: 10px 0;}
+        .receipt-row:last-child { border-bottom: none; font-weight: bold; font-size: 1.2rem; color: var(--main-red); margin-top: 10px; }
+        
+        /* ==========================================================================
+           10. MOBILE RESPONSIVENESS
+           ========================================================================== */
+        @media (max-width: 768px) {
+            nav { flex-direction: column; padding: 15px; gap: 15px; }
+            .nav-links { flex-wrap: wrap; justify-content: center; gap: 15px; }
+            main { padding-top: 130px; }
+            .services-grid { grid-template-columns: 1fr; } /* Stack cards only on small mobile */
+            .showcase-grid { grid-template-columns: 1fr; }
+            .search-container { justify-content: center; }
+            .search-box { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="loader">
+        <div class="loader-text">BLOODSHOT</div>
+        <div class="loader-bar"><div class="loader-fill"></div></div>
+    </div>
+
+    <div class="scanlines"></div>
+    <div class="particles-container" id="particles"></div>
+
+    <nav>
+        <a href="#" class="nav-logo" onclick="navigate('home')">Blood<span>Shot</span></a>
+        <div class="nav-links">
+            <a onclick="navigate('home')" id="nav-home" class="active">Terminal</a>
+            <a onclick="navigate('services')" id="nav-services">Services</a>
+            <a onclick="navigate('showcase')" id="nav-showcase">Showcase & FAQ</a>
+            <a onclick="navigate('contact')" id="nav-contact">Contact</a>
+        </div>
+    </nav>
+
+    <main>
+        <div id="home" class="page active">
+            <div class="glass-panel hero-section">
+                <div class="logo-box">
+                    <a href="https://ibb.co/hx76fz8m" target="_blank">
+                        <img src="https://i.ibb.co/cKgBLnTr/1781700281723.png" alt="BloodShot Logo">
+                    </a>
+                </div>
+                
+                <h1 class="neon-heading">System Initialized: Welcome to My Forge</h1>
+                
+                <div class="about-text">
+                    <p>Hi, I am <strong>BloodShot</strong>. Welcome to my digital workspace. I specialize in engineering high-performance Discord servers, designing striking user/server banners, crafting dynamic video edits, and developing sleek, responsive websites.</p>
+                    <br>
+                    <p>I turn visions into digital reality for anyone willing to give me a chance. I have substantial experience in community framework development—proof of which can be seen in the <a class="hyperlink" href="https://discord.gg/3TQtxYNEYX" target="_blank">Th3-Anime Discord Server</a>, a project I actively contributed to.</p>
+                    <br>
+                    <p>Beyond architecture, I create highly polished graphics. A visual example of my banner aesthetic is below, available standalone or bundled with server packages. For multimedia, I run my own <a class="hyperlink" href="https://youtube.com/@bloodshot1000?si=4uwW23_SDiQkyUjc" target="_blank">YouTube Channel</a>, featuring countless edits supported by a growing audience. As for web development? The interface you are currently navigating is living proof.</p>
+                </div>
+
+                <div class="banner-display">
+                    <a href="https://ibb.co/0RhN3S6W" target="_blank">
+                        <img src="https://i.ibb.co/KpFZHkfQ/file-000000001e1071f4ac5592cee639fb35.png" alt="Futuristic Banner Example">
+                    </a>
+                </div>
+
+                <button class="btn" onclick="navigate('services')">View Services Database</button>
+            </div>
+        </div>
+
+        <div id="services" class="page">
+            <div class="glass-panel">
+                <h1 class="neon-heading">Service Registry</h1>
+                
+                <div class="notice-box">
+                    <span>⚠️</span>
+                    <p><strong>Strict Protocol:</strong> Purchases are pre-order only. Payment is required prior to task initiation. If a request cannot be fulfilled, a 100% refund protocol will be executed automatically.</p>
+                </div>
+
+                <div class="search-container">
+                    <input type="text" id="service-search" class="search-box" placeholder="Search parameters...">
+                </div>
+
+                <section class="service-category">
+                    <h3 class="neon-heading">Discord Servers</h3>
+                    <div class="services-grid">
+                        <div class="service-card" onclick="selectService('Basic Discord Server', '$3')">
+                            <div class="card-header">
+                                <h4 class="card-title">Basic Server</h4>
+                                <span class="price-badge">$3</span>
+                            </div>
+                            <p class="card-desc">Channel setup, role configuration, custom server icon, and server banner injection.</p>
+                            <div class="card-action">Initiate Order ➔</div>
+                        </div>
+
+                        <div class="service-card" onclick="selectService('Basic Discord Server Pro', '$5')">
+                            <div class="card-header">
+                                <h4 class="card-title">Basic Server Pro</h4>
+                                <span class="price-badge">$5</span>
+                            </div>
+                            <p class="card-desc">Basic package + advanced role customization, reaction roles, and automated welcomer/leaver scripts.</p>
+                            <div class="card-action">Initiate Order ➔</div>
+                        </div>
+
+                        <div class="service-card" onclick="selectService('Advanced Discord Server', '$10')">
+                            <div class="card-header">
+                                <h4 class="card-title">Advanced Server</h4>
+                                <span class="price-badge">$10</span>
+                            </div>
+                            <p class="card-desc">Pro package + AutoMod integration, community onboarding features, audit logs, and custom requests.</p>
+                            <div class="card-action">Initiate Order ➔</div>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="service-category">
+                    <h3 class="neon-heading">User / Server Banners</h3>
+                    <div class="services-grid">
+                        <div class="service-card" onclick="selectService('Basic Banner', '$5')">
+                            <div class="card-header">
+                                <h4 class="card-title">Basic Banner</h4>
+                                <span class="price-badge">$5</span>
+                            </div>
+                            <p class="card-desc">One highly detailed, custom-designed single banner for personal user profiles or server headers.</p>
+                            <div class="card-action">Initiate Order ➔</div>
+                        </div>
+
+                        <div class="service-card" onclick="selectService('Multiple Banners', '$10')">
+                            <div class="card-header">
+                                <h4 class="card-title">Multiple Banners</h4>
+                                <span class="price-badge">$10</span>
+                            </div>
+                            <p class="card-desc">A batch of 3 distinct, high-quality user/server banners tailored to different themes or events.</p>
+                            <div class="card-action">Initiate Order ➔</div>
+                        </div>
+
+                        <div class="service-card" onclick="selectService('Unlimited Banners', '$20')">
+                            <div class="card-header">
+                                <h4 class="card-title">Unlimited Banners</h4>
+                                <span class="price-badge">$20</span>
+                            </div>
+                            <p class="card-desc">The ultimate package. Unlimited banner requests under fair use guidelines. Continuous design support.</p>
+                            <div class="card-action">Initiate Order ➔</div>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="service-category">
+                    <h3 class="neon-heading">Video Editing</h3>
+                    <div class="services-grid">
+                        <div class="service-card" onclick="selectService('Shorts Video', '$1')">
+                            <div class="card-header">
+                                <h4 class="card-title">Shorts Video</h4>
+                                <span class="price-badge">$1</span>
+                            </div>
+                            <p class="card-desc">1 single vertical short (TikTok/Reel/Shorts) featuring slick transitions, cuts, and synchronized music.</p>
+                            <div class="card-action">Initiate Order ➔</div>
+                        </div>
+
+                        <div class="service-card" onclick="selectService('Long Video', '$3')">
+                            <div class="card-header">
+                                <h4 class="card-title">Long Video <small>(Max 10m)</small></h4>
+                                <span class="price-badge">$3</span>
+                            </div>
+                            <p class="card-desc">Standard YouTube-style editing with precise cuts, transitions, and pacing. Final output up to 10 minutes.</p>
+                            <div class="card-action">Initiate Order ➔</div>
+                        </div>
+
+                        <div class="service-card" onclick="selectService('Unlimited Editing', '$7')">
+                            <div class="card-header">
+                                <h4 class="card-title">Unlimited Editing</h4>
+                                <span class="price-badge">$7</span>
+                            </div>
+                            <p class="card-desc">No time limits, no constraints. Heavy edits, complex timelines, and premium post-production handling.</p>
+                            <div class="card-action">Initiate Order ➔</div>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="service-category" style="margin-bottom: 0;">
+                    <h3 class="neon-heading">Website Development</h3>
+                    <div class="services-grid">
+                        <div class="service-card" onclick="selectService('One Page Website', '$2')">
+                            <div class="card-header">
+                                <h4 class="card-title">One Page Website</h4>
+                                <span class="price-badge">$2</span>
+                            </div>
+                            <p class="card-desc">Design and structural development of a sleek, modern single-page layout (like a landing page).</p>
+                            <div class="card-action">Initiate Order ➔</div>
+                        </div>
+
+                        <div class="service-card" onclick="selectService('3 Page Website', '$6')">
+                            <div class="card-header">
+                                <h4 class="card-title">3 Page Website</h4>
+                                <span class="price-badge">$6</span>
+                            </div>
+                            <p class="card-desc">A complete 3-page digital architecture structured specifically to your brand's unique needs.</p>
+                            <div class="card-action">Initiate Order ➔</div>
+                        </div>
+
+                        <div class="service-card" onclick="selectService('Multi-Page Website', '$12')">
+                            <div class="card-header">
+                                <h4 class="card-title">Multi-Page App</h4>
+                                <span class="price-badge">$12</span>
+                            </div>
+                            <p class="card-desc">Extensive multi-page web environment setup, deep UI/UX design, and complex routing layouts.</p>
+                            <div class="card-action">Initiate Order ➔</div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+
+        <div id="showcase" class="page">
+            <div class="glass-panel">
+                <h1 class="neon-heading">Intel & Archives</h1>
+                <p style="color: var(--text-dim); margin-bottom: 30px;">Accessing client testimonials and frequently asked queries...</p>
+                
+                <div class="showcase-grid">
+                    <div>
+                        <h2 style="border-bottom: 1px solid var(--glass-border); padding-bottom: 10px;">Subject Feedback</h2>
+                        
+                        <div class="testimonial-box">
+                            <p class="testimonial-text">"BloodShot completely revamped my Discord server. The automated systems and onboarding process make running the community effortless."</p>
+                            <p class="testimonial-author">— Server Admin, Th3-Anime Network</p>
+                        </div>
+                        
+                        <div class="testimonial-box">
+                            <p class="testimonial-text">"Needed an aesthetic banner for my profile and got exactly what I envisioned. High quality, crisp lines, and perfectly sized."</p>
+                            <p class="testimonial-author">— Verified Client #042</p>
+                        </div>
+
+                        <div class="testimonial-box">
+                            <p class="testimonial-text">"The video editing is top tier. Cuts are perfectly synced with the audio. Fast delivery too."</p>
+                            <p class="testimonial-author">— Content Creator</p>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h2 style="border-bottom: 1px solid var(--glass-border); padding-bottom: 10px;">F.A.Q. Database</h2>
+                        
+                        <div class="faq-item" onclick="toggleFaq(this)">
+                            <div class="faq-q">What is the accepted payment method?</div>
+                            <div class="faq-a">Payments are discussed securely via email after you initiate an order. Standard digital transaction methods are supported.</div>
+                        </div>
+
+                        <div class="faq-item" onclick="toggleFaq(this)">
+                            <div class="faq-q">How long does a project take?</div>
+                            <div class="faq-a">Turnaround time depends strictly on the complexity of the service. Short videos or basic banners can take 24-48 hours. Websites and advanced servers require more time. I will provide an ETA upon contact.</div>
+                        </div>
+
+                        <div class="faq-item" onclick="toggleFaq(this)">
+                            <div class="faq-q">How do refunds work?</div>
+                            <div class="faq-a">If I am unable to fulfill your request or the task requirements exceed initial agreements, a 100% refund will be issued immediately to the original payment source.</div>
+                        </div>
+                        
+                        <div class="faq-item" onclick="toggleFaq(this)">
+                            <div class="faq-q">Can I request revisions?</div>
+                            <div class="faq-a">Minor tweaks and adjustments are completely fine. Major structural rebuilds post-delivery may incur additional fees.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="contact" class="page">
+            <div class="glass-panel contact-wrapper">
+                <h1 class="neon-heading">Communication Uplink</h1>
+                <p style="color: var(--text-dim);">Direct line to bloodshot.1002@gmail.com</p>
+
+                <div class="order-receipt">
+                    <div class="receipt-row">
+                        <span>Target Service:</span>
+                        <strong id="display-service" style="color: var(--text-light);">None Selected</strong>
+                    </div>
+                    <div class="receipt-row">
+                        <span>Status:</span>
+                        <strong style="color: #00ff00;">Awaiting Transmission</strong>
+                    </div>
+                    <div class="receipt-row">
+                        <span>Base Price:</span>
+                        <strong id="display-price">$0.00</strong>
+                    </div>
+                </div>
+
+                <p style="margin-bottom: 30px; font-size: 0.9rem;">
+                    Clicking the button below will automatically generate an encrypted email payload via your default mail client (Gmail/Outlook/etc.). Do not alter the subject line to ensure proper sorting.
+                </p>
+
+                <a href="#" id="email-action-btn" class="btn" style="width: 100%; display: block; box-sizing: border-box;">
+                    Transmit Order via Email
+                </a>
+
+                <br><br>
+                <button class="btn" onclick="navigate('services')" style="background: transparent; border-color: #555; font-size: 0.8rem; padding: 8px 15px;">
+                    ⟵ Abort & Return to Services
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // 1. Loader Logic
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                const loader = document.getElementById('loader');
+                loader.style.opacity = '0';
+                setTimeout(() => {
+                    loader.style.display = 'none';
+                }, 800); // Wait for fade out
+            }, 2000); // Fake load time for cyberpunk aesthetic
+            
+            generateParticles();
+        });
+
+        // 2. SPA Navigation
+        function navigate(pageId) {
+            // Hide all pages
+            document.querySelectorAll('.page').forEach(page => {
+                page.classList.remove('active');
+            });
+            // Show target page
+            document.getElementById(pageId).classList.add('active');
+            
+            // Update Navigation Highlighting
+            document.querySelectorAll('.nav-links a').forEach(link => {
+                link.classList.remove('active');
+            });
+            const activeNav = document.getElementById(`nav-${pageId}`);
+            if(activeNav) activeNav.classList.add('active');
+
+            window.scrollTo(0, 0);
+        }
+
+        // 3. Service Selection & Dynamic Email Generation
+        function selectService(serviceName, servicePrice) {
+            // Update UI on Contact Page
+            document.getElementById('display-service').innerText = serviceName;
+            document.getElementById('display-price').innerText = servicePrice;
+
+            // Generate Mailto Link
+            const emailAddress = "bloodshot.1002@gmail.com";
+            const subject = encodeURIComponent(`Order Request: ${serviceName}`);
+            const body = encodeURIComponent(
+`Hi BloodShot,
+
+I am interested in purchasing a service from your registry.
+
+=========================
+ORDER DETAILS:
+Service Name: ${serviceName}
+Listed Price: ${servicePrice}
+Reference: ${window.location.href}
+=========================
+
+Here are the specific details and requirements for what I need:
+[Please type your instructions/requests here...]
+
+
+I look forward to working with you.
+`
+            );
+
+            const mailtoLink = `mailto:${emailAddress}?subject=${subject}&body=${body}`;
+            document.getElementById('email-action-btn').href = mailtoLink;
+
+            // Switch to contact page automatically
+            navigate('contact');
+        }
+
+        // 4. Background Particles Generation
+        function generateParticles() {
+            const container = document.getElementById('particles');
+            const particleCount = 25; // Number of glowing dots
+
+            for(let i = 0; i < particleCount; i++) {
+                let p = document.createElement('div');
+                p.classList.add('particle');
+                
+                // Randomize properties
+                let size = Math.random() * 4 + 1; // 1px to 5px
+                let posX = Math.random() * 100; // 0% to 100%vw
+                let duration = Math.random() * 15 + 10; // 10s to 25s
+                let delay = Math.random() * 20; // 0s to 20s
+
+                p.style.width = `${size}px`;
+                p.style.height = `${size}px`;
+                p.style.left = `${posX}vw`;
+                p.style.animationDuration = `${duration}s`;
+                p.style.animationDelay = `${delay}s`;
+
+                container.appendChild(p);
+            }
+        }
+
+        // 5. Search Filter Functionality
+        document.getElementById('service-search').addEventListener('input', function(e) {
+            const term = e.target.value.toLowerCase();
+            const cards = document.querySelectorAll('.service-card');
+            
+            cards.forEach(card => {
+                const title = card.querySelector('.card-title').innerText.toLowerCase();
+                const desc = card.querySelector('.card-desc').innerText.toLowerCase();
+                
+                if(title.includes(term) || desc.includes(term)) {
+                    card.style.display = 'flex';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        });
+
+        // 6. FAQ Accordion Logic
+        function toggleFaq(element) {
+            element.classList.toggle('active');
+        }
+    </script>
+</body>
+</html>
