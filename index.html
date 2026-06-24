@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>BloodShot Services</title>
+    <style>
+        /* ---------- RESET & BASE ---------- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #010000;
+            color: #FFEDF1;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.7;
+            min-height: 100vh;
+            padding: 1rem;
+        }
+
+        a {
+            color: #9B0000;
+            text-decoration: none;
+            font-weight: 600;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            background: #010000;
+            padding: 1rem 1rem 3rem;
+            border-radius: 20px;
+        }
+
+        /* ---------- NAVIGATION ---------- */
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem 0 2rem 0;
+            flex-wrap: wrap;
+            gap: 1rem;
+            border-bottom: 2px solid #9B0000;
+            margin-bottom: 2rem;
+        }
+        .logo-nav {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: #FFEDF1;
+            letter-spacing: 1px;
+        }
+        .logo-nav span {
+            color: #9B0000;
+        }
+        .nav-links {
+            display: flex;
+            gap: 1.8rem;
+            flex-wrap: wrap;
+        }
+        .nav-links a {
+            color: #FFEDF1;
+            font-weight: 500;
+            font-size: 1.1rem;
+            padding-bottom: 4px;
+            border-bottom: 2px solid transparent;
+            transition: 0.2s;
+        }
+        .nav-links a:hover {
+            border-bottom-color: #9B0000;
+            text-decoration: none;
+        }
+        .nav-links a.active {
+            border-bottom-color: #9B0000;
+            color: #9B0000;
+        }
+
+        /* ---------- PAGES (SPA) ---------- */
+        .page {
+            display: none;
+            animation: fade 0.3s ease;
+        }
+        .page.active {
+            display: block;
+        }
+
+        @keyframes fade {
+            0% { opacity: 0.4; transform: translateY(6px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ---------- CARDS / SECTIONS ---------- */
+        .card {
+            background: #0d0000;
+            border: 1px solid #9B0000;
+            border-radius: 16px;
+            padding: 1.8rem 1.5rem;
+            transition: 0.2s;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            cursor: pointer;
+        }
+        .card:hover {
+            transform: scale(1.02);
+            box-shadow: 0 0 20px rgba(155, 0, 0, 0.3);
+            border-color: #FFEDF1;
+        }
+        .card h3 {
+            color: #FFEDF1;
+            font-size: 1.4rem;
+            margin-bottom: 0.3rem;
+        }
+        .card .price {
+            color: #9B0000;
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin: 0.3rem 0 0.8rem 0;
+        }
+        .card p {
+            color: #d4c8cc;
+            font-size: 0.98rem;
+            flex: 1;
+        }
+        .card .badge {
+            margin-top: 1rem;
+            font-size: 0.8rem;
+            color: #9B0000;
+            text-align: right;
+            border-top: 1px solid #2a0a0a;
+            padding-top: 0.8rem;
+            letter-spacing: 0.5px;
+        }
+
+        .section-title {
+            font-size: 2rem;
+            color: #9B0000;
+            margin: 2.5rem 0 1.2rem 0;
+            border-left: 6px solid #9B0000;
+            padding-left: 1rem;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 1.8rem;
+        }
+
+        .disclaimer {
+            background: #1a0000;
+            border-left: 6px solid #9B0000;
+            padding: 1.5rem 2rem;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+            font-size: 1.1rem;
+            color: #FFEDF1;
+            text-align: center;
+        }
+
+        /* ---------- HOMEPAGE SPECIFIC ---------- */
+        .hero-logo {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        .hero-logo img {
+            max-width: 280px;
+            width: 100%;
+            height: auto;
+        }
+
+        .about-card {
+            background: #0d0000;
+            border: 1px solid #9B0000;
+            border-radius: 20px;
+            padding: 2rem 2.2rem;
+            margin-bottom: 2.5rem;
+        }
+        .about-card p {
+            font-size: 1.05rem;
+            margin-bottom: 1rem;
+        }
+        .about-card .banner-example {
+            max-width: 100%;
+            border-radius: 12px;
+            border: 2px solid #9B0000;
+            margin: 0.8rem 0 1rem 0;
+        }
+        .about-card a {
+            color: #9B0000;
+            font-weight: 700;
+        }
+
+        .btn-primary {
+            display: inline-block;
+            background: #9B0000;
+            color: #FFEDF1;
+            padding: 0.9rem 3.5rem;
+            border-radius: 60px;
+            font-weight: 700;
+            font-size: 1.2rem;
+            border: none;
+            cursor: pointer;
+            transition: 0.3s;
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(155, 0, 0, 0.4);
+        }
+        .btn-primary:hover {
+            background: #b80000;
+            transform: scale(1.04);
+            text-decoration: none;
+            box-shadow: 0 6px 30px rgba(155, 0, 0, 0.6);
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        /* ---------- CONTACT PAGE ---------- */
+        .contact-box {
+            background: #0d0000;
+            border: 2px solid #9B0000;
+            border-radius: 20px;
+            padding: 2.5rem 2rem;
+            max-width: 600px;
+            margin: 2rem auto;
+            text-align: center;
+        }
+        .contact-box .email {
+            font-size: 1.8rem;
+            color: #FFEDF1;
+            background: #1a0000;
+            padding: 0.8rem;
+            border-radius: 60px;
+            margin: 1.5rem 0;
+            border: 1px dashed #9B0000;
+            word-break: break-all;
+        }
+        .btn-mail {
+            display: inline-block;
+            background: #9B0000;
+            color: #FFEDF1;
+            padding: 1rem 3rem;
+            border-radius: 60px;
+            font-weight: 700;
+            font-size: 1.3rem;
+            transition: 0.3s;
+            border: none;
+            cursor: pointer;
+        }
+        .btn-mail:hover {
+            background: #b80000;
+            transform: scale(1.05);
+            text-decoration: none;
+        }
+        .selected-service {
+            color: #9B0000;
+            font-size: 1.2rem;
+            margin: 1rem 0;
+        }
+
+        /* ---------- MOBILE TWEAKS ---------- */
+        @media (max-width: 600px) {
+            .container { padding: 0.5rem; }
+            nav { flex-direction: column; align-items: flex-start; }
+            .about-card { padding: 1.2rem; }
+            .section-title { font-size: 1.6rem; }
+            .card h3 { font-size: 1.2rem; }
+            .contact-box .email { font-size: 1.2rem; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+
+    <!-- ========== NAVIGATION ========== -->
+    <nav>
+        <div class="logo-nav">Blood<span>Shot</span></div>
+        <div class="nav-links">
+            <a href="#" onclick="showPage('home')" id="nav-home" class="active">Home</a>
+            <a href="#" onclick="showPage('services')" id="nav-services">Services</a>
+            <a href="#" onclick="showPage('contact')" id="nav-contact">Contact</a>
+        </div>
+    </nav>
+
+    <!-- ========== PAGE: HOME ========== -->
+    <div id="page-home" class="page active">
+        <!-- Logo -->
+        <div class="hero-logo">
+            <img src="https://i.ibb.co/cKgBLnTr/1781700281723.png" alt="BloodShot Logo" />
+        </div>
+
+        <!-- About Card -->
+        <div class="about-card">
+            <p><strong>Hi, I am BloodShot.</strong> I want to create discord servers, user/server banners, video edits and websites for anyone willing to give me a chance. I have some experience in server development, proof of server development is the Th3-Anime discord server <a href="https://discord.gg/3TQtxYNEYX" target="_blank">https://discord.gg/3TQtxYNEYX</a> which I did not do completely alone however helped work on.</p>
+
+            <p>An example of server banners I create are <br />
+                <img class="banner-example" src="https://i.ibb.co/KpFZHkfQ/file-000000001e1071f4ac5592cee639fb35.png" alt="Server banner example" />
+                which come included in a certain server development package or alone.
+            </p>
+
+            <p>As for video editing I run my own YouTube channel <a href="https://youtube.com/@bloodshot1000?si=4uwW23_SDiQkyUjc" target="_blank">https://youtube.com/@bloodshot1000?si=4uwW23_SDiQkyUjc</a> and have made countless edits to which many can testify to. Lastly for website development what you're reading now is proof of that already.</p>
+        </div>
+
+        <div class="text-center">
+            <a href="#" onclick="showPage('services')" class="btn-primary">My Services</a>
+        </div>
+    </div>
+
+    <!-- ========== PAGE: SERVICES ========== -->
+    <div id="page-services" class="page">
+        <div class="disclaimer">
+            ⚠️ <strong>Purchases are pre-order only</strong>, meaning you must pay before I can do your task. However if your request is not fulfilled a refund will be sent.
+        </div>
+
+        <!-- Discord Servers -->
+        <h2 class="section-title">📁 Discord Servers</h2>
+        <div class="grid-2">
+            <div class="card" onclick="goToContact('Basic Discord Server', '$3')">
+                <h3>Basic Discord Server</h3>
+                <div class="price">$3</div>
+                <p>channel setup, roles, server icon & server banner.</p>
+                <div class="badge">click to order</div>
+            </div>
+            <div class="card" onclick="goToContact('Basic Discord Server Pro', '$5')">
+                <h3>Basic Discord Server Pro</h3>
+                <div class="price">$5</div>
+                <p>basic + roles customization, reaction roles, welcomer &amp; leaver.</p>
+                <div class="badge">click to order</div>
+            </div>
+            <div class="card" onclick="goToContact('Advanced Discord Server', '$10')">
+                <h3>Advanced Discord Server</h3>
+                <div class="price">$10</div>
+                <p>Basic, Basic Pro + automod, onboarding, logs &amp; any other requests.</p>
+                <div class="badge">click to order</div>
+            </div>
+        </div>
+
+        <!-- Banners -->
+        <h2 class="section-title">🖼️ User / Server Banners</h2>
+        <div class="grid-2">
+            <div class="card" onclick="goToContact('Basic Banner', '$5')">
+                <h3>Basic Banner</h3>
+                <div class="price">$5</div>
+                <p>One single banner for user/server alone.</p>
+                <div class="badge">click to order</div>
+            </div>
+            <div class="card" onclick="goToContact('Multiple Banners', '$10')">
+                <h3>Multiple Banners</h3>
+                <div class="price">$10</div>
+                <p>3 single user/server banners.</p>
+                <div class="badge">click to order</div>
+            </div>
+            <div class="card" onclick="goToContact('Unlimited Banners', '$20')">
+                <h3>Unlimited Banners</h3>
+                <div class="price">$20</div>
+                <p>Unlimited Banners.</p>
+                <div class="badge">click to order</div>
+            </div>
+        </div>
+
+        <!-- Video Editing -->
+        <h2 class="section-title">🎬 Video Editing</h2>
+        <div class="grid-2">
+            <div class="card" onclick="goToContact('Shorts Video', '$1')">
+                <h3>Shorts Video</h3>
+                <div class="price">$1</div>
+                <p>1 single shorts video with transitions &amp; music of your choice.</p>
+                <div class="badge">click to order</div>
+            </div>
+            <div class="card" onclick="goToContact('Long Video (max 10 mins)', '$3')">
+                <h3>Long Video (max 10 minutes)</h3>
+                <div class="price">$3</div>
+                <p>basic video editing with cuts and transitions final product = 10 minutes.</p>
+                <div class="badge">click to order</div>
+            </div>
+            <div class="card" onclick="goToContact('Unlimited Editing', '$7')">
+                <h3>Unlimited Editing</h3>
+                <div class="price">$7</div>
+                <p>Unlimited video editing, no time limits nor constraints.</p>
+                <div class="badge">click to order</div>
+            </div>
+        </div>
+
+        <!-- Website Development -->
+        <h2 class="section-title">🌐 Website Development</h2>
+        <div class="grid-2">
+            <div class="card" onclick="goToContact('1-Page Website', '$2')">
+                <h3>1-Page Website</h3>
+                <div class="price">$2</div>
+                <p>One fully responsive single-page site.</p>
+                <div class="badge">click to order</div>
+            </div>
+            <div class="card" onclick="goToContact('3-Page Website', '$6')">
+                <h3>3-Page Website</h3>
+                <div class="price">$6</div>
+                <p>Three fully responsive pages (Home, About, Contact).</p>
+                <div class="badge">click to order</div>
+            </div>
+            <div class="card" onclick="goToContact('Multi-Page Website', '$12')">
+                <h3>Multi-Page Website</h3>
+                <div class="price">$12</div>
+                <p>5+ pages, fully custom, mobile-first design.</p>
+                <div class="badge">click to order</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== PAGE: CONTACT ========== -->
+    <div id="page-contact" class="page">
+        <div class="contact-box">
+            <h2 style="color:#9B0000; margin-bottom:0.5rem;">📧 Contact Me</h2>
+            <p style="margin-bottom:0.5rem;">Send your order request to:</p>
+            <div class="email">bloodshot.1002@gmail.com</div>
+
+            <div id="selected-service-display" class="selected-service">
+                <span id="service-name-display">No service selected</span>
+            </div>
+
+            <a id="mailto-link" href="mailto:bloodshot.1002@gmail.com" class="btn-mail">
+                ✉️ Open Gmail (Auto-Fill)
+            </a>
+            <p style="margin-top:1.2rem; font-size:0.9rem; color:#b09b9f;">
+                Clicking the button opens your email app with the service details pre-filled.
+            </p>
+        </div>
+    </div>
+
+</div>
+
+<!-- ========== JAVASCRIPT (SPA + EMAIL LOGIC) ========== -->
+<script>
+    // ----- SPA Navigation -----
+    function showPage(pageId) {
+        // Hide all pages
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+        // Show target
+        const target = document.getElementById('page-' + pageId);
+        if (target) target.classList.add('active');
+
+        // Update nav highlights
+        document.querySelectorAll('.nav-links a').forEach(link => link.classList.remove('active'));
+        const navMap = { home: 'nav-home', services: 'nav-services', contact: 'nav-contact' };
+        const activeNav = document.getElementById(navMap[pageId]);
+        if (activeNav) activeNav.classList.add('active');
+
+        // Update URL params (cleanly)
+        const url = new URL(window.location);
+        url.searchParams.set('page', pageId);
+        // If going to home or services, remove service params to avoid confusion
+        if (pageId !== 'contact') {
+            url.searchParams.delete('service');
+            url.searchParams.delete('price');
+        }
+        window.history.pushState({}, '', url);
+    }
+
+    // ----- Contact with Service Pre-fill -----
+    function goToContact(service, price) {
+        // Save service details in URL params
+        const url = new URL(window.location);
+        url.searchParams.set('page', 'contact');
+        url.searchParams.set('service', service);
+        url.searchParams.set('price', price);
+        window.history.pushState({}, '', url);
+
+        // Switch page
+        showPage('contact');
+
+        // Update the contact UI with the selected service
+        updateContactPage(service, price);
+    }
+
+    function updateContactPage(service, price) {
+        const display = document.getElementById('service-name-display');
+        const mailtoLink = document.getElementById('mailto-link');
+
+        if (service && price) {
+            display.textContent = `You selected: ${service} (${price})`;
+            // Build mailto
+            const subject = encodeURIComponent(`Inquiry about ${service} (${price})`);
+            const body = encodeURIComponent(
+                `Hi, I'm interested in ${service} (${price}).\n\n` +
+                `Website: ${window.location.href.split('?')[0]}\n` +
+                `Service link: ${window.location.href}`
+            );
+            mailtoLink.href = `mailto:bloodshot.1002@gmail.com?subject=${subject}&body=${body}`;
+        } else {
+            display.textContent = 'No service selected. Please go back and pick a service.';
+            mailtoLink.href = 'mailto:bloodshot.1002@gmail.com';
+        }
+    }
+
+    // ----- On Page Load: check URL params -----
+    window.addEventListener('load', function() {
+        const params = new URLSearchParams(window.location.search);
+        const page = params.get('page') || 'home';
+        const service = params.get('service');
+        const price = params.get('price');
+
+        // Show the correct page
+        showPage(page);
+
+        // If contact page, populate the service
+        if (page === 'contact' && service && price) {
+            updateContactPage(service, price);
+        } else if (page === 'contact') {
+            // Show default contact without service
+            updateContactPage(null, null);
+        }
+    });
+
+    // Handle back/forward browser buttons
+    window.addEventListener('popstate', function() {
+        const params = new URLSearchParams(window.location.search);
+        const page = params.get('page') || 'home';
+        const service = params.get('service');
+        const price = params.get('price');
+
+        showPage(page);
+        if (page === 'contact' && service && price) {
+            updateContactPage(service, price);
+        } else if (page === 'contact') {
+            updateContactPage(null, null);
+        }
+    });
+</script>
+
+</body>
+</html>
