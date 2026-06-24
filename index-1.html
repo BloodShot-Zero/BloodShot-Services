@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BloodShot Services</title>
+<style>
+:root{
+--bg:#010000;
+--red:#9B0000;
+--text:#FFEDF1;
+--card:#0d0000;
+}
+*{box-sizing:border-box}
+body{
+margin:0;
+font-family:Segoe UI,sans-serif;
+background:var(--bg);
+color:var(--text);
+overflow-x:hidden;
+}
+body::before{
+content:"";
+position:fixed;
+inset:0;
+background:
+linear-gradient(90deg,transparent 0%,rgba(155,0,0,.08) 50%,transparent 100%);
+animation:glitch 6s infinite linear;
+pointer-events:none;
+}
+@keyframes glitch{
+0%,100%{transform:translateX(0)}
+25%{transform:translateX(-10px)}
+50%{transform:translateX(10px)}
+75%{transform:translateX(-5px)}
+}
+.container{max-width:1200px;margin:auto;padding:30px}
+.page{display:none}
+.page.active{display:block}
+.logo{text-align:center}
+.logo img{
+max-width:220px;
+filter:drop-shadow(0 0 20px rgba(155,0,0,.8));
+}
+.card{
+background:linear-gradient(145deg,#120000,#050000);
+border:1px solid var(--red);
+border-radius:18px;
+padding:25px;
+box-shadow:0 0 25px rgba(155,0,0,.25);
+}
+.about-card{margin-top:20px}
+.banner-preview{
+width:100%;
+border-radius:12px;
+border:2px solid var(--red);
+margin:15px 0;
+}
+h1,h2,h3{color:var(--text)}
+.section-title{
+margin-top:50px;
+color:#ffb8c1;
+border-left:5px solid var(--red);
+padding-left:12px;
+}
+.services-grid{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+gap:20px;
+}
+.service-card{
+cursor:pointer;
+transition:.3s;
+}
+.service-card:hover{
+transform:translateY(-8px);
+box-shadow:0 0 30px rgba(155,0,0,.55);
+}
+.price{
+font-size:2rem;
+color:#ff7474;
+font-weight:bold;
+}
+.btn{
+background:var(--red);
+color:var(--text);
+border:none;
+padding:14px 28px;
+border-radius:10px;
+cursor:pointer;
+font-weight:bold;
+text-decoration:none;
+display:inline-block;
+}
+.center{text-align:center}
+.notice{
+text-align:center;
+padding:20px;
+margin-bottom:30px;
+border:1px solid var(--red);
+border-radius:15px;
+background:#120000;
+}
+.contact-box{text-align:center}
+a{color:#ff9aa8}
+</style>
+</head>
+<body>
+<div class="container">
+
+<div id="home-page" class="page active">
+<div class="logo">
+<img src="https://i.ibb.co/cKgBLnTr/1781700281723.png" alt="BloodShot Logo">
+</div>
+
+<div class="card about-card">
+<h2>BloodShot — Creative Digital Services</h2>
+<p>Hi, I'm BloodShot. I specialize in Discord server development, custom user and server banners, video editing, and website design. My goal is to help communities, creators, and businesses build a stronger online presence through professional and affordable services.</p>
+
+<p>I have hands-on experience with Discord server development and contributed to the Th3-Anime Discord server. While it was a collaborative effort, I actively helped with the server's setup and development.</p>
+
+<p><a href="https://discord.gg/3TQtxYNEYX" target="_blank">View the Th3-Anime Discord Server</a></p>
+
+<img class="banner-preview" src="https://i.ibb.co/KpFZHkfQ/file-000000001e1071f4ac5592cee639fb35.png" alt="Banner Example">
+
+<p>Custom banners can be purchased individually or included with selected server development packages.</p>
+
+<p>I also run my own YouTube channel where I regularly create and edit video content.</p>
+
+<p><a href="https://youtube.com/@bloodshot1000?si=4uwW23_SDiQkyUjc" target="_blank">Visit My YouTube Channel</a></p>
+
+<p>Finally, this website itself serves as an example of my web design and development capabilities.</p>
+</div>
+
+<div class="center">
+<br>
+<button class="btn" onclick="showPage('services-page')">My Services</button>
+</div>
+</div>
+
+<div id="services-page" class="page">
+<button class="btn" onclick="showPage('home-page')">← Home</button>
+
+<div class="notice">
+Purchases are pre-order only. Payment is required before work begins. If your request cannot be fulfilled, a full refund will be provided.
+</div>
+
+<div id="servicesContainer"></div>
+</div>
+
+<div id="contact-page" class="page">
+<button class="btn" onclick="showPage('services-page')">← Services</button>
+<div class="card contact-box">
+<h2>Contact Me</h2>
+<p>Selected Service: <strong id="serviceName"></strong></p>
+<p>Price: <strong id="servicePrice"></strong></p>
+<p>Email: bloodshot.1002@gmail.com</p>
+<a id="gmailLink" class="btn" target="_blank">Open Gmail Draft</a>
+</div>
+</div>
+
+</div>
+
+<script>
+const services = {
+"Discord Servers":[
+["Basic Discord Server","$3","channel setup, roles, server icon & server banner."],
+["Basic Discord Server Pro","$5","basic + roles customization, reaction roles, welcomer & leaver."],
+["Advanced Discord Server","$10","Basic, Basic Pro + automod, onboarding, logs & any other requests."]
+],
+"User/Server Banners":[
+["Basic Banner","$5","One single banner for user/server alone."],
+["Multiple Banners","$10","3 single user/server banners."],
+["Unlimited Banners","$20","Unlimited Banners."]
+],
+"Video Editing":[
+["Shorts Video","$1","1 single shorts video with transitions & music of your choice."],
+["Long Video (max 10 minutes)","$3","basic video editing with cuts and transitions final product = 10 minutes."],
+["Unlimited Editing","$7","Unlimited video editing, no time limits nor constraints."]
+],
+"Website Development":[
+["One Page Website","$2","Single page website."],
+["3 Page Website","$6","Three page website."],
+["Multi-Page Website","$12","Multi-page website."]
+]
+};
+
+const container=document.getElementById("servicesContainer");
+for(const section in services){
+container.innerHTML += `<h2 class="section-title">${section}</h2><div class="services-grid">${
+services[section].map(s=>`
+<div class="card service-card" onclick="selectService('${s[0]}','${s[1]}')">
+<h3>${s[0]}</h3>
+<div class="price">${s[1]}</div>
+<p>${s[2]}</p>
+</div>`).join("")
+}</div>`;
+}
+
+function showPage(id){
+document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+document.getElementById(id).classList.add("active");
+window.scrollTo(0,0);
+}
+
+function selectService(title,price){
+document.getElementById("serviceName").textContent=title;
+document.getElementById("servicePrice").textContent=price;
+
+const websiteLink=window.location.href + "#"+encodeURIComponent(title);
+const subject=encodeURIComponent(title+" ("+price+")");
+const body=encodeURIComponent(
+`Hi, I'm interested in ${title}.
+
+Service Price: ${price}
+
+Service Link:
+${websiteLink}
+
+Please contact me regarding this order.`
+);
+
+document.getElementById("gmailLink").href =
+`https://mail.google.com/mail/?view=cm&fs=1&to=bloodshot.1002@gmail.com&su=${subject}&body=${body}`;
+
+showPage("contact-page");
+}
+</script>
+</body>
+</html>
